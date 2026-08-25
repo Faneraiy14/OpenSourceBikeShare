@@ -20,7 +20,7 @@ class FormLoginAuthenticator extends BaseFormLoginAuthenticator
     {
         try {
             return parent::authenticate($request);
-            // @phpstan-ignore catch.neverThrown (parent::authenticate() can throw this at runtime, see the linked Symfony issue above - PHPStan just can't see that path through the framework internals)
+            // @phpstan-ignore catch.neverThrown (intentional, see the linked Symfony issue above)
         } catch (BadRequestHttpException $badRequestHttpException) {
             throw new BadCredentialsException('Bad credentials.', 0, $badRequestHttpException);
         }

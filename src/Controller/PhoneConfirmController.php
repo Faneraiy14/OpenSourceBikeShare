@@ -9,6 +9,7 @@ use BikeShare\Event\UserVerificationCompletedEvent;
 use BikeShare\Repository\HistoryRepository;
 use BikeShare\Repository\UserRepository;
 use BikeShare\Sms\SmsSenderInterface;
+use BikeShare\App\Security\RequiresAppUserTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -20,6 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PhoneConfirmController extends AbstractController
 {
+    use RequiresAppUserTrait;
+
     public function index(
         bool $isSmsSystemEnabled,
         SmsSenderInterface $smsSender,
@@ -31,7 +34,7 @@ class PhoneConfirmController extends AbstractController
         EventDispatcherInterface $eventDispatcher
     ): Response {
         // Only logged users can verify their phone
-        $user = $this->getUser();
+        $user = $this->getAppUser();
         if (!$isSmsSystemEnabled || $user->isNumberConfirmed()) {
             return $this->redirectToRoute('home');
         }

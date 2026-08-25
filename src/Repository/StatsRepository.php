@@ -111,7 +111,7 @@ class StatsRepository
         }
 
         if ($stats['rental_count'] > 1) {
-            $stats['average_rental_duration'] = $stats['total_rental_duration'] / $stats['rental_count'] ?? 0;
+            $stats['average_rental_duration'] = $stats['total_rental_duration'] / $stats['rental_count'];
         }
 
         $stats['unique_bikes_rented'] = count($stats['bikes_rented']);

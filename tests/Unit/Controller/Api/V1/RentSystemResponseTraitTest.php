@@ -122,7 +122,7 @@ class RentSystemResponseTraitTest extends TestCase
         return new class {
             use RentSystemResponseTrait;
 
-            public function call(RentSystemResult $result, TranslatorInterface $translator): JsonResponse
+            public function call(RentSystemResult $result, TranslatorInterface $translator): Response
             {
                 return $this->jsonRentSystemResult($result, $translator);
             }

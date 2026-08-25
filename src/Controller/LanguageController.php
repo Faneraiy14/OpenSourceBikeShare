@@ -26,7 +26,7 @@ class LanguageController extends AbstractController
         if (in_array($locale, $this->enabledLocales, true)) {
             $request->getSession()->set('_locale', $locale);
 
-            /** @var User $user */
+            /** @var ?User $user */
             $user = $this->getUser();
             if ($user) {
                 $this->userSettingsRepository->saveLocale($user->getUserId(), $locale);

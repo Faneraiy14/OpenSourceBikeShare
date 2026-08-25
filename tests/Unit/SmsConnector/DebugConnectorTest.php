@@ -19,7 +19,6 @@ class DebugConnectorTest extends TestCase
             $requestStack,
             $loggerMock,
             [], #$configuration
-            true
         );
 
         $loggerMock

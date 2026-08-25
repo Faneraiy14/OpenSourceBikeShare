@@ -11,7 +11,6 @@ use BikeShare\SmsConnector\SmsConnectorInterface;
 use BikeShare\SmsTextNormalizer\SmsTextNormalizerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -21,7 +20,7 @@ class SmsSenderTest extends TestCase
     private SmsConnectorInterface&MockObject $smsConnectorMock;
     private SmsTextNormalizerInterface&MockObject $smsTextNormalizerMock;
     private DbInterface&MockObject $dbMock;
-    private ClockInterface $clockMock;
+    private MockClock $clockMock;
     private TranslatorInterface&MockObject $translatorMock;
     private SmsSender $smsSender;
 

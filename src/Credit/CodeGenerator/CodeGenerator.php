@@ -10,6 +10,7 @@ class CodeGenerator implements CodeGeneratorInterface
     public function generate($count, $length, $wastage = 25)
     {
         // build array allowing for possible wastage through duplicate values
+        $codes = [];
         for ($i = 0; $i <= $count + $wastage + 1; $i++) {
             $codes[] = substr(str_shuffle($this->acceptableChars), 0, $length);
         }

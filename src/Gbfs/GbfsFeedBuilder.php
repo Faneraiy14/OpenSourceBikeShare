@@ -32,7 +32,6 @@ class GbfsFeedBuilder
         private readonly string $systemName,
         private readonly string $timezone,
         private readonly string $contactEmail,
-        private readonly string $defaultLocale,
         /** @var list<string> */
         private readonly array $enabledLocales,
     ) {

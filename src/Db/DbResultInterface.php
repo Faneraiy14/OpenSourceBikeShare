@@ -5,7 +5,7 @@ namespace BikeShare\Db;
 interface DbResultInterface
 {
     /**
-     * @return array|bool
+     * @return array|bool|null
      */
     public function fetchAssoc();
 

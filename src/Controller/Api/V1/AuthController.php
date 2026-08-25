@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BikeShare\Controller\Api\V1;
 
+use BikeShare\App\Entity\User;
 use BikeShare\App\Security\EmailUnconfirmedException;
 use BikeShare\App\Security\JwtTokenService;
 use BikeShare\App\Security\UserConfirmedEmailChecker;
@@ -15,6 +16,7 @@ use BikeShare\Repository\RefreshTokenRepository;
 use BikeShare\Repository\UserRepository;
 use BikeShare\User\UserRegistration;
 use BikeShare\Welcome\MessengerChatsProvider;
+use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +27,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AuthController extends AbstractController
 {
+    use RequiresAppUserTrait;
+
     public function __construct(
         private readonly UserProvider $userProvider,
         private readonly UserRepository $userRepository,
@@ -38,6 +42,21 @@ class AuthController extends AbstractController
         private readonly MessengerChatsProvider $messengerChatsProvider,
         private readonly bool $isSmsSystemEnabled = false,
     ) {
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    private function loadAppUser(string $identifier): User
+    {
+        $user = $this->userProvider->loadUserByIdentifier($identifier);
+        if (!$user instanceof User) {
+            // UserProvider only ever constructs our own User - if this
+            // ever fires, the provider wiring itself is broken.
+            throw new UserNotFoundException(sprintf('Unknown user %s', $identifier));
+        }
+
+        return $user;
     }
 
     public function cities(): Response
@@ -119,7 +138,7 @@ class AuthController extends AbstractController
         }
 
         try {
-            $user = $this->userProvider->loadUserByIdentifier($number);
+            $user = $this->loadAppUser($number);
         } catch (UserNotFoundException) {
             return $this->json(['detail' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
         }
@@ -197,7 +216,7 @@ class AuthController extends AbstractController
         }
 
         try {
-            $user = $this->userProvider->loadUserByIdentifier((string)$userData['number']);
+            $user = $this->loadAppUser((string)$userData['number']);
         } catch (UserNotFoundException) {
             return $this->json(['detail' => 'Invalid refresh token'], Response::HTTP_UNAUTHORIZED);
         }

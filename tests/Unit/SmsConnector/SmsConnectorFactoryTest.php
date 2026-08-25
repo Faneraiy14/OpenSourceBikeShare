@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BikeShare\Test\Unit\SmsConnector;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use BikeShare\SmsConnector\DisabledConnector;
 use BikeShare\SmsConnector\EuroSmsConnector;
@@ -16,21 +17,24 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 class SmsConnectorFactoryTest extends TestCase
 {
     /**
-     * @param array $config
+     * @param string $connectorName
      * @param bool $debugMode
      * @param string $expectedInstance
-     * @param string|null $expectedException
+     * @param string|null $expectedExceptionMessage
      */
     #[DataProvider('getConnectorDataProvider')]
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetConnector(
         $connectorName,
         $debugMode,
         $expectedInstance,
         $expectedExceptionMessage = null
     ) {
-        $logger = $expectedExceptionMessage
-            ? $this->createMock(LoggerInterface::class)
-            : $this->createStub(LoggerInterface::class);
+        // Always a mock (not a stub) - a mock without expects() set behaves
+        // exactly like a stub, and this keeps $logger's static type
+        // consistent instead of a Mock|Stub union PHPStan can't call
+        // expects() on below.
+        $logger = $this->createMock(LoggerInterface::class);
         $serviceLocatorMock = $this->createMock(ServiceLocator::class);
 
         if ($expectedExceptionMessage) {

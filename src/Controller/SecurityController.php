@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace BikeShare\Controller;
 
+use BikeShare\App\Entity\User;
 use BikeShare\App\Security\UserProvider;
 use BikeShare\Mail\MailSenderInterface;
+use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecurityController extends AbstractController
 {
+    use RequiresAppUserTrait;
+
     public function login(
         bool $isSmsSystemEnabled,
         AuthenticationUtils $authenticationUtils
@@ -55,19 +59,17 @@ class SecurityController extends AbstractController
             $number = $request->request->get('number');
 
             try {
+                // UserProvider itself catches \InvalidArgumentException from
+                // phone-number purification and rethrows it as
+                // UserNotFoundException, so that's the only case reaching
+                // here - not revealing which phones exist is intentional
+                // (the generic success flash below covers both cases).
                 $user = $userProvider->loadUserByIdentifier($number);
             } catch (UserNotFoundException) {
                 $user = null;
-            } catch (\InvalidArgumentException) {
-                $this->addFlash(
-                    'error',
-                    $translator->trans('Invalid phone number.')
-                );
-
-                return $this->redirectToRoute('reset_password');
             }
 
-            if (!is_null($user)) {
+            if ($user instanceof User) {
                 mt_srand(crc32(microtime()));
                 $plainPassword = substr(md5(mt_rand() . microtime() . $user->getUserIdentifier()), 0, 8);
                 $hashedPassword = $passwordHasher->hashPassword(

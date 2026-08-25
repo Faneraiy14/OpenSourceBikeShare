@@ -7,6 +7,7 @@ namespace BikeShare\Controller\Api\V1\Admin;
 use BikeShare\Controller\Api\V1\RentSystemResponseTrait;
 use BikeShare\Rent\Enum\RentSystemType;
 use BikeShare\Rent\RentSystemFactory;
+use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReturnsController extends AbstractController
 {
+    use RequiresAppUserTrait;
+
     use RentSystemResponseTrait;
 
     public function forceCreate(
@@ -38,7 +41,7 @@ class ReturnsController extends AbstractController
 
         $note = isset($payload['note']) && is_string($payload['note']) ? $payload['note'] : '';
         $response = $rentSystemFactory->getRentSystem(RentSystemType::WEB)->returnBike(
-            $this->getUser()->getUserId(),
+            $this->getAppUser()->getUserId(),
             $bikeNumber,
             $standName,
             $note,

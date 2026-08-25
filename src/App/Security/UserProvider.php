@@ -50,7 +50,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
                 'identifier' => $identifier
             ]
         );
-        if (!$result || $result->rowCount() == 0) {
+        if ($result->rowCount() == 0) {
             throw new UserNotFoundException(sprintf('Unknown user %s', $identifier));
         }
 
@@ -106,6 +106,13 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
+        if (!$user instanceof User) {
+            // Only our own User implementation is ever provided by this
+            // class - if this ever fires, the auth wiring itself is
+            // broken, not this check.
+            return;
+        }
+
         $this->db->query(
             'UPDATE users SET password = :newHashedPassword WHERE number = :number',
             [

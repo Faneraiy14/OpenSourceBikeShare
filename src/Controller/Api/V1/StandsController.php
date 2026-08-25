@@ -7,11 +7,14 @@ namespace BikeShare\Controller\Api\V1;
 use BikeShare\Enum\StandStatus;
 use BikeShare\Repository\NoteRepository;
 use BikeShare\Repository\StandRepository;
+use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class StandsController extends AbstractController
 {
+    use RequiresAppUserTrait;
+
     public function __construct(
         private readonly StandRepository $standRepository,
         private readonly NoteRepository $noteRepository,
@@ -61,7 +64,7 @@ class StandsController extends AbstractController
         }
 
         $stands = $this->standRepository->findAll($statuses);
-        $userCity = $this->getUser()->getCity();
+        $userCity = $this->getAppUser()->getCity();
         $stands = array_values(array_filter(
             $stands,
             fn(array $stand) => $stand['city'] === $userCity,

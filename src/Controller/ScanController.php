@@ -10,6 +10,7 @@ use BikeShare\Rent\Enum\RentSystemType;
 use BikeShare\Rent\RentSystemFactory;
 use BikeShare\Repository\BikeRepository;
 use BikeShare\Repository\StandRepository;
+use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ScanController extends AbstractController
 {
+    use RequiresAppUserTrait;
+
     public function __construct(
         private readonly RentSystemFactory $rentSystemFactory,
         private readonly BikeRepository $bikeRepository,
@@ -48,7 +51,7 @@ class ScanController extends AbstractController
             && $request->request->get('rent') === 'yes'
         ) {
             $rentSystem = $this->rentSystemFactory->getRentSystem(RentSystemType::QR);
-            $result = $rentSystem->rentBike($this->getUser()->getUserId(), $bikeNumber);
+            $result = $rentSystem->rentBike($this->getAppUser()->getUserId(), $bikeNumber);
             $this->logResponse($result);
         }
 
@@ -72,7 +75,7 @@ class ScanController extends AbstractController
             $error = new TranslatableMessage('stand.error.not_found', ['standName' => $standName]);
         } else {
             $rentSystem = $this->rentSystemFactory->getRentSystem(RentSystemType::QR);
-            $result = $rentSystem->returnBike($this->getUser()->getUserId(), 0, $standName);
+            $result = $rentSystem->returnBike($this->getAppUser()->getUserId(), 0, $standName);
             $this->logResponse($result);
         }
 
@@ -92,7 +95,7 @@ class ScanController extends AbstractController
                     time = :time
                 ',
             [
-                'number' => $this->getUser()->getUserIdentifier(),
+                'number' => $this->getAppUser()->getUserIdentifier(),
                 'text' => strip_tags($response->trans($this->translator)),
                 'time' => $this->clock->now()->format('Y-m-d H:i:s'),
             ]

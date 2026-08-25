@@ -80,4 +80,22 @@ class RoutesAccessTest extends BikeSharingKernelTestCase
             }
         }
     }
+
+    /**
+     * Test that admin routes require ROLE_ADMIN
+     */
+    public function testAdminRoutes(): void
+    {
+        $accessMap = static::getContainer()->get('security.access_map');
+        foreach (self::ADMIN_ROUTES as $route => $method) {
+            $request = Request::create($route, $method);
+            [$attributes, $channel] = $accessMap->getPatterns($request);
+
+            $this->assertContains(
+                'ROLE_ADMIN',
+                $attributes,
+                'Access map should require ROLE_ADMIN for route ' . $route
+            );
+        }
+    }
 }

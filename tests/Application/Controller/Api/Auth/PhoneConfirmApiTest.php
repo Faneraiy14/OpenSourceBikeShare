@@ -82,7 +82,7 @@ class PhoneConfirmApiTest extends BikeSharingWebTestCase
         $sendEmails = $mailSender->getSentMessages();
         $this->assertCount(1, $sendEmails);
         $body = $sendEmails[0]['message'] ?? '';
-        $this->assertNotNull($body);
+        $this->assertNotSame('', $body);
         preg_match('/(\/user\/confirm\/email\/[a-z0-9]+)/', $body, $matches);
         $this->assertNotEmpty($matches[1], 'Email confirmation link not found');
         $confirmationLink = $matches[1];

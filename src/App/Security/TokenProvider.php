@@ -25,7 +25,7 @@ class TokenProvider implements TokenProviderInterface
                 'SELECT * FROM remember_me_token WHERE series = :series',
                 ['series' => $series]
             );
-            if (!$result || $result->rowCount() == 0) {
+            if ($result->rowCount() == 0) {
                 throw new TokenNotFoundException('No token found.');
             }
 

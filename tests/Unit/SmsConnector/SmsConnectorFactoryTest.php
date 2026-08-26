@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BikeShare\Test\Unit\SmsConnector;
 
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use BikeShare\SmsConnector\DisabledConnector;
 use BikeShare\SmsConnector\EuroSmsConnector;
@@ -23,17 +22,12 @@ class SmsConnectorFactoryTest extends TestCase
      * @param string|null $expectedExceptionMessage
      */
     #[DataProvider('getConnectorDataProvider')]
-    #[AllowMockObjectsWithoutExpectations]
     public function testGetConnector(
         $connectorName,
         $debugMode,
         $expectedInstance,
         $expectedExceptionMessage = null
     ) {
-        // Always a mock (not a stub) - a mock without expects() set behaves
-        // exactly like a stub, and this keeps $logger's static type
-        // consistent instead of a Mock|Stub union PHPStan can't call
-        // expects() on below.
         $logger = $this->createMock(LoggerInterface::class);
         $serviceLocatorMock = $this->createMock(ServiceLocator::class);
 
@@ -43,17 +37,7 @@ class SmsConnectorFactoryTest extends TestCase
                 ->method('get')
                 ->with($connectorName)
                 ->willThrowException(new \Exception($expectedExceptionMessage));
-        } else {
-            $serviceLocatorMock
-                ->expects($this->once())
-                ->method('get')
-                ->with($connectorName)
-                ->willReturn($this->createStub($expectedInstance));
-        }
 
-        $smsConnectorFactory = new SmsConnectorFactory($connectorName, $serviceLocatorMock, $logger);
-
-        if ($expectedExceptionMessage) {
             $logger
                 ->expects($this->once())
                 ->method('error')
@@ -63,7 +47,17 @@ class SmsConnectorFactoryTest extends TestCase
                         && $context['exception'] instanceof \Exception
                         && $context['exception']->getMessage() === $expectedExceptionMessage)
                 );
+        } else {
+            $serviceLocatorMock
+                ->expects($this->once())
+                ->method('get')
+                ->with($connectorName)
+                ->willReturn($this->createStub($expectedInstance));
+
+            $logger->expects($this->never())->method('error');
         }
+
+        $smsConnectorFactory = new SmsConnectorFactory($connectorName, $serviceLocatorMock, $logger);
 
         $result = $smsConnectorFactory->getConnector();
         $this->assertInstanceOf($expectedInstance, $result);

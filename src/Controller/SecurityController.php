@@ -55,11 +55,6 @@ class SecurityController extends AbstractController
             $number = $request->request->get('number');
 
             try {
-                // UserProvider itself catches \InvalidArgumentException from
-                // phone-number purification and rethrows it as
-                // UserNotFoundException, so that's the only case reaching
-                // here - not revealing which phones exist is intentional
-                // (the generic success flash below covers both cases).
                 $user = $userProvider->loadUserByIdentifier($number);
             } catch (UserNotFoundException) {
                 $user = null;

@@ -52,7 +52,8 @@ class CommandExecutor
             $arguments = [];
             $params = (new \ReflectionMethod($command, '__invoke'))->getParameters();
             foreach ($params as $param) {
-                if ($param->getType()->getName() === User::class) {
+                $paramType = $param->getType();
+                if ($paramType instanceof \ReflectionNamedType && $paramType->getName() === User::class) {
                     $arguments[] = $user;
                     continue;
                 }

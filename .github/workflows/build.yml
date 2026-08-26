@@ -46,3 +46,6 @@ jobs:
 
       - name: Run PHP CodeSniffer
         run: vendor/bin/phpcs ./src ./tests
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G

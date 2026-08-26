@@ -50,7 +50,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
                 'identifier' => $identifier
             ]
         );
-        if (!$result || $result->rowCount() == 0) {
+        if ($result->rowCount() == 0) {
             throw new UserNotFoundException(sprintf('Unknown user %s', $identifier));
         }
 

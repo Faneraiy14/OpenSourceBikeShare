@@ -59,8 +59,7 @@ abstract class BikeSharingWebTestCase extends WebTestCase
 
     /**
      * Declare that the current test *should* write a log entry.
-     * @var int $level
-     * @var string|callable $pattern
+     * @param string|callable $pattern
      *
      * Examples:
      *  $this->expectLog(Logger::ERROR, '/DB timeout/');

@@ -102,6 +102,7 @@ class AdminNotifierTest extends TestCase
 
         $this->notifier->notify(new TranslatableMessage('admin.test'));
 
+        // @phpstan-ignore offsetAccess.notFound (populated at runtime by the mock callback above)
         $this->assertSame('en', $smsCalls['111']);
         $this->assertSame('de', $smsCalls['222']);
         $this->assertSame(['subject' => 'BikeShare notification', 'body' => 'Hello admin'], $mailCalls['a@x']);

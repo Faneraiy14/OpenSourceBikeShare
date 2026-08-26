@@ -7,7 +7,6 @@ namespace BikeShare\Controller\Api\V1;
 use BikeShare\Credit\CreditSystemInterface;
 use BikeShare\Repository\CouponRepository;
 use BikeShare\Enum\CreditChangeType;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +16,6 @@ class CouponsController extends AbstractController
     public function __construct(
         private readonly CreditSystemInterface $creditSystem,
         private readonly CouponRepository $couponRepository,
-        private readonly LoggerInterface $logger,
     ) {
     }
 

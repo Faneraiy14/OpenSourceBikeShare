@@ -18,7 +18,7 @@ class EuroSmsConnectorTest extends TestCase
     use PHPMock;
 
     private const API_HOST = 'https://as.eurosms.com/api/v3/send/one';
-    private const API_HOST_TEST = 'https://as.eurosms.com/api/v3/test/one';
+    // private const API_HOST_TEST = 'https://as.eurosms.com/api/v3/test/one';
 
     public function testCheckConfig()
     {

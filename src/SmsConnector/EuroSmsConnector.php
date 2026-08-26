@@ -15,7 +15,7 @@ class EuroSmsConnector extends AbstractConnector
     private string $gatewayKey = '';
     private string $gatewaySenderNumber = '';
     private const API_HOST = 'https://as.eurosms.com/api/v3/send/one';
-    private const API_HOST_TEST = 'https://as.eurosms.com/api/v3/test/one';
+    // private const API_HOST_TEST = 'https://as.eurosms.com/api/v3/test/one';
 
     public const FLAG_DELIVERY = 1; //Vyžiadanie generovanie doručenky u operátora
     public const FLAG_LONG_SMS = 2; //Očakávaná správa bude dlhšia ako 160, resp. 70 znakov.

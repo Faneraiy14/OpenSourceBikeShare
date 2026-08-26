@@ -222,7 +222,7 @@ class CreditSystem implements CreditSystemInterface
             $parsed[] = [
                 'date' => $date,
                 'amount' => (float)($jsonData['amount'] ?? 0),
-                'type' => CreditChangeType::tryFrom($jsonData['reason'])?->value ?? 'unknown',
+                'type' => CreditChangeType::tryFrom($jsonData['reason'])->value ?? 'unknown',
                 'balance' => (float)($jsonData['balance'] ?? 0),
             ];
         }

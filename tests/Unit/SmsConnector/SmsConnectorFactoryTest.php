@@ -16,10 +16,10 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 class SmsConnectorFactoryTest extends TestCase
 {
     /**
-     * @param array $config
+     * @param string $connectorName
      * @param bool $debugMode
      * @param string $expectedInstance
-     * @param string|null $expectedException
+     * @param string|null $expectedExceptionMessage
      */
     #[DataProvider('getConnectorDataProvider')]
     public function testGetConnector(
@@ -28,9 +28,7 @@ class SmsConnectorFactoryTest extends TestCase
         $expectedInstance,
         $expectedExceptionMessage = null
     ) {
-        $logger = $expectedExceptionMessage
-            ? $this->createMock(LoggerInterface::class)
-            : $this->createStub(LoggerInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
         $serviceLocatorMock = $this->createMock(ServiceLocator::class);
 
         if ($expectedExceptionMessage) {
@@ -39,17 +37,7 @@ class SmsConnectorFactoryTest extends TestCase
                 ->method('get')
                 ->with($connectorName)
                 ->willThrowException(new \Exception($expectedExceptionMessage));
-        } else {
-            $serviceLocatorMock
-                ->expects($this->once())
-                ->method('get')
-                ->with($connectorName)
-                ->willReturn($this->createStub($expectedInstance));
-        }
 
-        $smsConnectorFactory = new SmsConnectorFactory($connectorName, $serviceLocatorMock, $logger);
-
-        if ($expectedExceptionMessage) {
             $logger
                 ->expects($this->once())
                 ->method('error')
@@ -59,7 +47,17 @@ class SmsConnectorFactoryTest extends TestCase
                         && $context['exception'] instanceof \Exception
                         && $context['exception']->getMessage() === $expectedExceptionMessage)
                 );
+        } else {
+            $serviceLocatorMock
+                ->expects($this->once())
+                ->method('get')
+                ->with($connectorName)
+                ->willReturn($this->createStub($expectedInstance));
+
+            $logger->expects($this->never())->method('error');
         }
+
+        $smsConnectorFactory = new SmsConnectorFactory($connectorName, $serviceLocatorMock, $logger);
 
         $result = $smsConnectorFactory->getConnector();
         $this->assertInstanceOf($expectedInstance, $result);

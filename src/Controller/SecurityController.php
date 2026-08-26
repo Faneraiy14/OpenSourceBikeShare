@@ -58,13 +58,6 @@ class SecurityController extends AbstractController
                 $user = $userProvider->loadUserByIdentifier($number);
             } catch (UserNotFoundException) {
                 $user = null;
-            } catch (\InvalidArgumentException) {
-                $this->addFlash(
-                    'error',
-                    $translator->trans('Invalid phone number.')
-                );
-
-                return $this->redirectToRoute('reset_password');
             }
 
             if (!is_null($user)) {

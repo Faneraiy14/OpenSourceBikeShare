@@ -12,6 +12,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 /**
  * @see https://github.com/symfony/symfony/issues/27961
+ *
+ * @phpstan-ignore class.extendsFinalByPhpDoc (intentional workaround, see the linked Symfony issue above)
  */
 class FormLoginAuthenticator extends BaseFormLoginAuthenticator
 {
@@ -19,6 +21,7 @@ class FormLoginAuthenticator extends BaseFormLoginAuthenticator
     {
         try {
             return parent::authenticate($request);
+            // @phpstan-ignore catch.neverThrown (intentional, see the linked Symfony issue above)
         } catch (BadRequestHttpException $badRequestHttpException) {
             throw new BadCredentialsException('Bad credentials.', 0, $badRequestHttpException);
         }

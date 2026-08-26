@@ -21,9 +21,6 @@ class SmsRequestControllerTest extends BikeSharingWebTestCase
 {
     private const USER_PHONE_NUMBER = '421951111111';
 
-    /**
-     * @var Callback|string $expectedSms
-     */
     #[DataProvider('smsDataProvider')]
     public function testBaseSmsFlow(
         string $phoneNumber,

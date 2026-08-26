@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BikeShare\Controller;
 
-use BikeShare\App\Entity\User;
 use BikeShare\App\Security\UserProvider;
 use BikeShare\Notifier\AdminNotifier;
 use BikeShare\Purifier\PhonePurifierInterface;
@@ -12,7 +11,6 @@ use BikeShare\Repository\UserSettingsRepository;
 use BikeShare\Sms\SmsSenderInterface;
 use BikeShare\SmsCommand\CommandExecutor;
 use BikeShare\SmsConnector\SmsConnectorInterface;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +19,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SmsRequestController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     public function __construct(
         private readonly PhonePurifierInterface $phonePurifier,
         private readonly SmsConnectorInterface $smsConnector,
@@ -56,12 +52,6 @@ class SmsRequestController extends AbstractController
                 ["number" => $this->smsConnector->getNumber(), 'sms' => $this->smsConnector]
             );
 
-            return new Response("User not found", Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!$user instanceof User) {
-            // UserProvider only ever constructs our own User - if this
-            // ever fires, the provider wiring itself is broken.
             return new Response("User not found", Response::HTTP_BAD_REQUEST);
         }
 

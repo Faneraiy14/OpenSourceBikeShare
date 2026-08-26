@@ -47,24 +47,5 @@ jobs:
       - name: Run PHP CodeSniffer
         run: vendor/bin/phpcs ./src ./tests
 
-  phpstan:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-version: [8.4, 8.5]
-      fail-fast: false
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-
-      - name: Install dependencies
-        run: composer install
-
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse --no-progress
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G

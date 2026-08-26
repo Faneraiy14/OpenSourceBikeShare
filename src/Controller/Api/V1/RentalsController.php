@@ -6,7 +6,6 @@ namespace BikeShare\Controller\Api\V1;
 
 use BikeShare\Rent\Enum\RentSystemType;
 use BikeShare\Rent\RentSystemFactory;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +13,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RentalsController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     use RentSystemResponseTrait;
 
     public function create(
@@ -32,7 +29,7 @@ class RentalsController extends AbstractController
         }
 
         $response = $rentSystemFactory->getRentSystem(RentSystemType::WEB)->rentBike(
-            $this->getAppUser()->getUserId(),
+            $this->getUser()->getUserId(),
             $bikeNumber
         );
 

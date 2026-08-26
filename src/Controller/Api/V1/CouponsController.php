@@ -7,15 +7,12 @@ namespace BikeShare\Controller\Api\V1;
 use BikeShare\Credit\CreditSystemInterface;
 use BikeShare\Repository\CouponRepository;
 use BikeShare\Enum\CreditChangeType;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CouponsController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     public function __construct(
         private readonly CreditSystemInterface $creditSystem,
         private readonly CouponRepository $couponRepository,
@@ -43,7 +40,7 @@ class CouponsController extends AbstractController
 
         $this->couponRepository->updateStatus($coupon, 2);// Mark as used
         $this->creditSystem->increaseCredit(
-            $this->getAppUser()->getUserId(),
+            $this->getUser()->getUserId(),
             (float)$couponData['value'],
             CreditChangeType::COUPON_REDEMPTION,
             ['couponCode' => $coupon]

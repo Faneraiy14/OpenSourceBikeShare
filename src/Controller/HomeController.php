@@ -5,15 +5,12 @@ namespace BikeShare\Controller;
 use BikeShare\Credit\CreditSystemInterface;
 use BikeShare\Repository\CityRepository;
 use BikeShare\Repository\UserSettingsRepository;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     public function index(
         Request $request,
         int $freeTimeHours,
@@ -44,7 +41,7 @@ class HomeController extends AbstractController
             'systemZoom' => $systemZoom,
             'systemRules' => $systemRules,
             'cities' => $cityRepository->findAvailableCities(),
-            'userSettings' => $userSettingsRepository->findByUserId($this->getAppUser()->getUserId()),
+            'userSettings' => $userSettingsRepository->findByUserId($this->getUser()->getUserId()),
             'personalStatsYearUrl' => $personalStatsYearUrl,
             'freeTime' => $freeTimeHours,
             'creditSystem' => $creditSystem,

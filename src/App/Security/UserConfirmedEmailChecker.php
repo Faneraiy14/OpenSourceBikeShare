@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BikeShare\App\Security;
 
-use BikeShare\App\Entity\User;
 use BikeShare\Event\UserReconfirmationEvent;
 use BikeShare\Repository\RegistrationRepository;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -27,13 +26,6 @@ class UserConfirmedEmailChecker implements UserCheckerInterface
 
     public function checkPostAuth(UserInterface $user): void
     {
-        if (!$user instanceof User) {
-            // Only our own User implementation is ever provided by
-            // UserProvider - if this ever fires, the auth wiring itself
-            // is broken, not this check.
-            return;
-        }
-
         $confirmation = $this->registrationRepository->findItemByUserId($user->getUserId());
         if (!empty($confirmation)) {
             // Carry the userKey read here into the event so the listener never re-queries

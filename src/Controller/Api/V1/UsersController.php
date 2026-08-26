@@ -12,7 +12,6 @@ use BikeShare\Repository\CityRepository;
 use BikeShare\Repository\HistoryRepository;
 use BikeShare\Repository\UserRepository;
 use BikeShare\Sms\SmsSenderInterface;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,8 +20,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class UsersController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly HistoryRepository $historyRepository,
@@ -37,7 +34,7 @@ class UsersController extends AbstractController
         CityRepository $cityRepository,
         Request $request
     ): Response {
-        $userId = $this->getAppUser()->getUserId();
+        $userId = $this->getUser()->getUserId();
         $payload = $request->getPayload()->all();
         $city = isset($payload['city']) && is_string($payload['city']) ? trim($payload['city']) : '';
         if (
@@ -65,7 +62,7 @@ class UsersController extends AbstractController
     public function userBike(
         BikeRepository $bikeRepository
     ): Response {
-        $userId = $this->getAppUser()->getUserId();
+        $userId = $this->getUser()->getUserId();
 
         $userBikes = $bikeRepository->findRentedBikesByUserId($userId);
 
@@ -76,7 +73,7 @@ class UsersController extends AbstractController
         BikeRepository $bikeRepository,
         CreditSystemInterface $creditSystem
     ): Response {
-        $userId = $this->getAppUser()->getUserId();
+        $userId = $this->getUser()->getUserId();
         $userBikes = $bikeRepository->findRentedBikesByUserId($userId);
         $userInfo = $this->userRepository->findItem($userId);
         $userCredit = $creditSystem->getUserCredit($userId);
@@ -94,7 +91,7 @@ class UsersController extends AbstractController
 
     public function creditHistory(CreditSystemInterface $creditSystem): Response
     {
-        $userId = $this->getAppUser()->getUserId();
+        $userId = $this->getUser()->getUserId();
         $creditHistory = $creditSystem->getUserCreditHistory($userId);
         $data = array_map(static function (array $entry): array {
             return [
@@ -110,7 +107,7 @@ class UsersController extends AbstractController
 
     public function trips(): Response
     {
-        $userId = $this->getAppUser()->getUserId();
+        $userId = $this->getUser()->getUserId();
         $trips = $this->historyRepository->findUserTripHistory($userId, 10);
 
         return $this->json($trips);
@@ -125,7 +122,7 @@ class UsersController extends AbstractController
             );
         }
 
-        $user = $this->getAppUser();
+        $user = $this->getUser();
         if ($user->isNumberConfirmed()) {
             return $this->json(['message' => 'Phone number is already confirmed.']);
         }
@@ -154,7 +151,7 @@ class UsersController extends AbstractController
 
     public function phoneConfirmVerify(Request $request): Response
     {
-        $user = $this->getAppUser();
+        $user = $this->getUser();
         if ($user->isNumberConfirmed()) {
             return $this->json(['message' => 'Phone number is already confirmed.']);
         }

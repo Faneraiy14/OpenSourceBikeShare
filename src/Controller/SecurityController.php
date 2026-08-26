@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace BikeShare\Controller;
 
-use BikeShare\App\Entity\User;
 use BikeShare\App\Security\UserProvider;
 use BikeShare\Mail\MailSenderInterface;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,8 +16,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecurityController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     public function login(
         bool $isSmsSystemEnabled,
         AuthenticationUtils $authenticationUtils
@@ -69,7 +65,7 @@ class SecurityController extends AbstractController
                 $user = null;
             }
 
-            if ($user instanceof User) {
+            if (!is_null($user)) {
                 mt_srand(crc32(microtime()));
                 $plainPassword = substr(md5(mt_rand() . microtime() . $user->getUserIdentifier()), 0, 8);
                 $hashedPassword = $passwordHasher->hashPassword(

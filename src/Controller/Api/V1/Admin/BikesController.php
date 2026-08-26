@@ -8,15 +8,12 @@ use BikeShare\Enum\Action;
 use BikeShare\Repository\BikeRepository;
 use BikeShare\Repository\HistoryRepository;
 use BikeShare\Repository\NoteRepository;
-use BikeShare\App\Security\RequiresAppUserTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class BikesController extends AbstractController
 {
-    use RequiresAppUserTrait;
-
     public function __construct(private readonly BikeRepository $bikeRepository)
     {
     }
@@ -78,7 +75,7 @@ class BikesController extends AbstractController
         $this->bikeRepository->updateBikeCode($bikeNumberInt, (int)$code);
 
         $historyRepository->addItem(
-            $this->getAppUser()->getUserId(),
+            $this->getUser()->getUserId(),
             $bikeNumberInt,
             Action::CHANGE_CODE,
             $formattedCode,

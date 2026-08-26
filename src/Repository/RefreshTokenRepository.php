@@ -60,7 +60,7 @@ class RefreshTokenRepository
             ['tokenHash' => $tokenHash]
         )->fetchAssoc();
 
-        if ($result === false || $result === null) {
+        if ($result === null) {
             return null;
         }
 

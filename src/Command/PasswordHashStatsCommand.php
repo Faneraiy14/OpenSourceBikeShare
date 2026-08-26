@@ -38,12 +38,6 @@ class PasswordHashStatsCommand extends Command
             SQL
         )->fetchAssoc();
 
-        if ($stats === false) {
-            $io->error('Unable to load password hash statistics. Please check database connectivity and try again.');
-
-            return Command::FAILURE;
-        }
-
         if ([] === $stats) {
             $io->warning('No users found in the database.');
 

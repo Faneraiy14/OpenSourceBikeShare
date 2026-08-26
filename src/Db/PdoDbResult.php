@@ -9,28 +9,18 @@ use PDOStatement;
 
 class PdoDbResult implements DbResultInterface
 {
-    /**
-     * @var PDOStatement|bool
-     */
-    private $result;
+    private readonly PDOStatement $result;
 
-    public function __construct($result)
+    public function __construct(PDOStatement $result)
     {
-        if (!($result instanceof PDOStatement) && !is_bool($result)) {
-            throw new \Exception("Invalid result type");
-        }
-
         $this->result = $result;
     }
 
     /**
-     * @return array|bool|null
+     * @return array|null
      */
     public function fetchAssoc()
     {
-        if ($this->result === false) {
-            return false;
-        }
         if ($this->result->rowCount() > 0) {
             return $this->result->fetch(PDO::FETCH_ASSOC);
         }
@@ -40,7 +30,7 @@ class PdoDbResult implements DbResultInterface
 
     public function fetchAllAssoc()
     {
-        return $this->result ? $this->result->fetchAll(PDO::FETCH_ASSOC) : [];
+        return $this->result->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -55,6 +45,6 @@ class PdoDbResult implements DbResultInterface
 
     public function rowCount()
     {
-        return $this->result ? (int)$this->result->rowCount() : 0;
+        return $this->result->rowCount();
     }
 }

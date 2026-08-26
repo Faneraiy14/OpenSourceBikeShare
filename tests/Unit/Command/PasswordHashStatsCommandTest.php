@@ -25,19 +25,6 @@ class PasswordHashStatsCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
     }
 
-    public function testExecuteReturnsFailureWhenStatsQueryFails(): void
-    {
-        $dbResult = $this->createMock(DbResultInterface::class);
-        $this->db->expects($this->once())->method('query')->willReturn($dbResult);
-        $dbResult->expects($this->once())->method('fetchAssoc')->willReturn(false);
-
-        $this->commandTester->execute([]);
-        $this->assertSame(Command::FAILURE, $this->commandTester->getStatusCode());
-
-        $output = $this->commandTester->getDisplay();
-        $this->assertStringContainsString('Unable to load password hash statistics.', $output);
-    }
-
     public function testExecuteRethrowsDatabaseException(): void
     {
         $this->db

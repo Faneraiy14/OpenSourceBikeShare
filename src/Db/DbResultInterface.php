@@ -4,18 +4,9 @@ namespace BikeShare\Db;
 
 interface DbResultInterface
 {
-    /**
-     * @return array|null
-     */
-    public function fetchAssoc();
+    public function fetchAssoc(): ?array;
 
-    /**
-     * @return array
-     */
-    public function fetchAllAssoc();
+    public function fetchAllAssoc(): array;
 
-    /**
-     * @return int
-     */
-    public function rowCount();
+    public function rowCount(): int;
 }

@@ -16,10 +16,7 @@ class PdoDbResult implements DbResultInterface
         $this->result = $result;
     }
 
-    /**
-     * @return array|null
-     */
-    public function fetchAssoc()
+    public function fetchAssoc(): ?array
     {
         if ($this->result->rowCount() > 0) {
             return $this->result->fetch(PDO::FETCH_ASSOC);
@@ -28,7 +25,7 @@ class PdoDbResult implements DbResultInterface
         return null;
     }
 
-    public function fetchAllAssoc()
+    public function fetchAllAssoc(): array
     {
         return $this->result->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -38,12 +35,12 @@ class PdoDbResult implements DbResultInterface
      * @phpcs:disable PSR1.Methods.CamelCapsMethodName
      */
     #[\Deprecated(message: 'use fetchAssoc')]
-    public function fetch_assoc()
+    public function fetch_assoc(): ?array
     {
         return $this->fetchAssoc();
     }
 
-    public function rowCount()
+    public function rowCount(): int
     {
         return $this->result->rowCount();
     }

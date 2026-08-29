@@ -226,6 +226,8 @@ class HistoryRepository
             return null;
         }
 
+        // rowCount() === 1 above guarantees this first (and only) fetchAssoc()
+        // call on this result returns a row, not null.
         return new \DateTimeImmutable($result->fetchAssoc()['time']);
     }
 
@@ -248,6 +250,8 @@ class HistoryRepository
             return null;
         }
 
+        // rowCount() === 1 above guarantees this first (and only) fetchAssoc()
+        // call on this result returns a row, not null.
         return new \DateTimeImmutable($result->fetchAssoc()['time']);
     }
 
@@ -303,6 +307,8 @@ class HistoryRepository
             return null;
         }
 
+        // rowCount() === 1 above guarantees this first (and only) fetchAssoc()
+        // call on this result returns a row, not null.
         return str_pad($result->fetchAssoc()['parameter'], 4, '0', STR_PAD_LEFT);
     }
 

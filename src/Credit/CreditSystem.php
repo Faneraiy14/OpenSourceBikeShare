@@ -158,6 +158,9 @@ class CreditSystem implements CreditSystemInterface
             return 0;
         }
 
+        // rowCount() > 0 above guarantees this is the FIRST fetch on this
+        // result (single-row query, no preceding loop), so fetchAssoc()
+        // can't yet return null here.
         return (float)$result->fetchAssoc()['credit'];
     }
 

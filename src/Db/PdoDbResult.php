@@ -18,11 +18,9 @@ class PdoDbResult implements DbResultInterface
 
     public function fetchAssoc(): ?array
     {
-        if ($this->result->rowCount() > 0) {
-            return $this->result->fetch(PDO::FETCH_ASSOC);
-        }
+        $row = $this->result->fetch(PDO::FETCH_ASSOC);
 
-        return null;
+        return $row === false ? null : $row;
     }
 
     public function fetchAllAssoc(): array

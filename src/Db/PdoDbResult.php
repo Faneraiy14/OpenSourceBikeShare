@@ -28,16 +28,6 @@ class PdoDbResult implements DbResultInterface
         return $this->result->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @phpcs:disable Generic.NamingConventions.CamelCapsFunctionName
-     * @phpcs:disable PSR1.Methods.CamelCapsMethodName
-     */
-    #[\Deprecated(message: 'use fetchAssoc')]
-    public function fetch_assoc(): ?array
-    {
-        return $this->fetchAssoc();
-    }
-
     public function rowCount(): int
     {
         return $this->result->rowCount();

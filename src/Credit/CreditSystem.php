@@ -221,11 +221,12 @@ class CreditSystem implements CreditSystemInterface
             $date = new \DateTimeImmutable($entry['time']);
             $parameter = $entry['parameter'];
 
-            $jsonData = json_decode($parameter, true, JSON_THROW_ON_ERROR);
+            $jsonData = json_decode($parameter, true, 512, JSON_THROW_ON_ERROR);
+            $reasonType = CreditChangeType::tryFrom($jsonData['reason']);
             $parsed[] = [
                 'date' => $date,
                 'amount' => (float)($jsonData['amount'] ?? 0),
-                'type' => CreditChangeType::tryFrom($jsonData['reason'])->value ?? 'unknown',
+                'type' => $reasonType instanceof CreditChangeType ? $reasonType->value : 'unknown',
                 'balance' => (float)($jsonData['balance'] ?? 0),
             ];
         }

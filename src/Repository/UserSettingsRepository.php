@@ -31,7 +31,7 @@ class UserSettingsRepository
         );
         $row = $result->fetchAssoc();
 
-        if ($row === false || $row === null) {
+        if ($row === null) {
             return $this->defaultSettings;
         }
 

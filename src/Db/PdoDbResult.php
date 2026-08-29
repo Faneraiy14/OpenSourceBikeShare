@@ -9,38 +9,23 @@ use PDOStatement;
 
 class PdoDbResult implements DbResultInterface
 {
-    /**
-     * @var PDOStatement|bool
-     */
-    private $result;
+    private readonly PDOStatement $result;
 
-    public function __construct($result)
+    public function __construct(PDOStatement $result)
     {
-        if (!($result instanceof PDOStatement) && !is_bool($result)) {
-            throw new \Exception("Invalid result type");
-        }
-
         $this->result = $result;
     }
 
-    /**
-     * @return array|bool|null
-     */
-    public function fetchAssoc()
+    public function fetchAssoc(): ?array
     {
-        if ($this->result === false) {
-            return false;
-        }
-        if ($this->result->rowCount() > 0) {
-            return $this->result->fetch(PDO::FETCH_ASSOC);
-        }
+        $row = $this->result->fetch(PDO::FETCH_ASSOC);
 
-        return null;
+        return $row === false ? null : $row;
     }
 
-    public function fetchAllAssoc()
+    public function fetchAllAssoc(): array
     {
-        return $this->result ? $this->result->fetchAll(PDO::FETCH_ASSOC) : [];
+        return $this->result->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -48,13 +33,13 @@ class PdoDbResult implements DbResultInterface
      * @phpcs:disable PSR1.Methods.CamelCapsMethodName
      */
     #[\Deprecated(message: 'use fetchAssoc')]
-    public function fetch_assoc()
+    public function fetch_assoc(): ?array
     {
         return $this->fetchAssoc();
     }
 
-    public function rowCount()
+    public function rowCount(): int
     {
-        return $this->result ? (int)$this->result->rowCount() : 0;
+        return $this->result->rowCount();
     }
 }

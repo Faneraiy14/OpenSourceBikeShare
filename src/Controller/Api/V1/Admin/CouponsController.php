@@ -66,7 +66,7 @@ class CouponsController extends AbstractController
 
         $minRequiredCredit = $this->creditSystem->getMinRequiredCredit();
         $value = $minRequiredCredit * $multiplier;
-        $couponCodes = $codeGenerator->generate(10, 6, 25);
+        $couponCodes = $codeGenerator->generate(10, 6);
         foreach ($couponCodes as $couponCode) {
             $this->couponRepository->addItem($couponCode, $value);
         }

@@ -65,12 +65,14 @@ class UserCreditHistoryTest extends BikeSharingWebTestCase
 
     public static function reasonProvider(): iterable
     {
-        yield 'known reason' => [CreditChangeType::CREDIT_ADD->value, CreditChangeType::CREDIT_ADD->value];
-        yield 'legacy/unknown' => ['legacy_reason_not_in_enum', 'unknown'];
+        yield 'known reason' =>
+            [['reason' => CreditChangeType::CREDIT_ADD->value], CreditChangeType::CREDIT_ADD->value];
+        yield 'legacy/unknown' => [['reason' => 'legacy_reason_not_in_enum'], 'unknown'];
+        yield 'missing reason key' => [[], 'unknown'];
     }
 
     #[DataProvider('reasonProvider')]
-    public function testCreditHistoryMapsReasonType(string $storedReason, string $expectedType): void
+    public function testCreditHistoryMapsReasonType(array $extraParameterFields, string $expectedType): void
     {
         $userData = $this->client->getContainer()->get(UserRepository::class)
             ->findItemByPhoneNumber(self::USER_PHONE_NUMBER);
@@ -78,7 +80,7 @@ class UserCreditHistoryTest extends BikeSharingWebTestCase
             $userData['userId'],
             0,
             Action::CREDIT_CHANGE,
-            json_encode(['amount' => 1.0, 'balance' => 1.0, 'reason' => $storedReason], JSON_THROW_ON_ERROR)
+            json_encode(array_merge(['amount' => 1.0, 'balance' => 1.0], $extraParameterFields), JSON_THROW_ON_ERROR)
         );
         $user = $this->client->getContainer()->get(UserProvider::class)->loadUserByIdentifier(self::USER_PHONE_NUMBER);
         $this->client->loginUser($user);

@@ -183,12 +183,14 @@ class CreditSystemTest extends TestCase
 
     public static function creditHistoryReasonProvider(): iterable
     {
-        yield 'known reason' => ['coupon_redemption', 'coupon_redemption'];
-        yield 'unrecognized reason maps to unknown' => ['some_legacy_reason_no_longer_in_the_enum', 'unknown'];
+        yield 'known reason' => [['reason' => 'coupon_redemption'], 'coupon_redemption'];
+        yield 'unrecognized reason maps to unknown' =>
+            [['reason' => 'some_legacy_reason_no_longer_in_the_enum'], 'unknown'];
+        yield 'missing reason key maps to unknown' => [[], 'unknown'];
     }
 
     #[DataProvider('creditHistoryReasonProvider')]
-    public function testGetUserCreditHistoryMapsReasonType(string $storedReason, string $expectedType): void
+    public function testGetUserCreditHistoryMapsReasonType(array $extraParameterFields, string $expectedType): void
     {
         $userId = 1;
         $historyRepository = $this->createMock(HistoryRepository::class);
@@ -200,11 +202,10 @@ class CreditSystemTest extends TestCase
                     'id' => 1,
                     'time' => '2026-01-01 12:00:00',
                     'action' => 5,
-                    'parameter' => json_encode([
-                        'amount' => 3.5,
-                        'balance' => 10.0,
-                        'reason' => $storedReason,
-                    ], JSON_THROW_ON_ERROR),
+                    'parameter' => json_encode(
+                        array_merge(['amount' => 3.5, 'balance' => 10.0], $extraParameterFields),
+                        JSON_THROW_ON_ERROR
+                    ),
                 ],
             ]);
 

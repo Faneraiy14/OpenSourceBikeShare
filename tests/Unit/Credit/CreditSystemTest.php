@@ -180,4 +180,53 @@ class CreditSystemTest extends TestCase
 
         $this->assertEquals(0, $creditSystem->getUserCredit($userId));
     }
+
+    public static function creditHistoryReasonProvider(): iterable
+    {
+        yield 'known reason' => [['reason' => 'coupon_redemption'], 'coupon_redemption'];
+        yield 'unrecognized reason maps to unknown' =>
+            [['reason' => 'some_legacy_reason_no_longer_in_the_enum'], 'unknown'];
+        yield 'missing reason key maps to unknown' => [[], 'unknown'];
+    }
+
+    #[DataProvider('creditHistoryReasonProvider')]
+    public function testGetUserCreditHistoryMapsReasonType(array $extraParameterFields, string $expectedType): void
+    {
+        $userId = 1;
+        $historyRepository = $this->createMock(HistoryRepository::class);
+        $historyRepository->expects($this->once())
+            ->method('findCreditHistoryByUser')
+            ->with($userId, 1000)
+            ->willReturn([
+                [
+                    'id' => 1,
+                    'time' => '2026-01-01 12:00:00',
+                    'action' => 5,
+                    'parameter' => json_encode(
+                        array_merge(['amount' => 3.5, 'balance' => 10.0], $extraParameterFields),
+                        JSON_THROW_ON_ERROR
+                    ),
+                ],
+            ]);
+
+        $creditSystem = new CreditSystem(
+            true, //isEnabled
+            '€', //creditCurrency
+            9, //minRequiredCredit
+            2, //rentalFee
+            0, //priceCycle
+            5, //longRentalFee
+            10, //limitIncreaseFee
+            5, //violationFee
+            $this->createStub(DbInterface::class),
+            $historyRepository
+        );
+
+        $result = $creditSystem->getUserCreditHistory($userId);
+
+        $this->assertCount(1, $result);
+        $this->assertEquals($expectedType, $result[0]['type']);
+        $this->assertEquals(3.5, $result[0]['amount']);
+        $this->assertEquals(10.0, $result[0]['balance']);
+    }
 }

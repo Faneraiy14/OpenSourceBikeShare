@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BikeShare\Credit\CodeGenerator;
 
 class CodeGenerator implements CodeGeneratorInterface
@@ -10,11 +12,7 @@ class CodeGenerator implements CodeGeneratorInterface
     // exclude problem chars: B8G6I1l0OQDS5Z2
     private string $acceptableChars = 'ACEFHJKMNPRTUVWXY4937';
 
-<<<<<<< HEAD
     public function generate(int $count, int $length): array
-=======
-    public function generate($count, $length, $wastage = 25)
->>>>>>> 3bc396c (Redesign per review: respond() returns string; drop CodeGenerator here)
     {
         if ($length < self::MIN_LENGTH) {
             throw new \InvalidArgumentException(

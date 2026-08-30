@@ -85,8 +85,6 @@ class SmsRequestController extends AbstractController
             );
         }
 
-        $this->smsConnector->respond();
-
-        return new Response();
+        return new Response($this->smsConnector->respond());
     }
 }

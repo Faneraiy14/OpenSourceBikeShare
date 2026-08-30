@@ -112,8 +112,7 @@ class EuroSmsConnectorTest extends TestCase
         $uuid = $reflection->getProperty('uuid');
         $uuid->setValue($smsConnector, 'uuid');
 
-        $this->expectOutputString('ok:uuid' . "\n");
-        $smsConnector->respond();
+        $this->assertSame('ok:uuid' . "\n", $smsConnector->respond());
     }
 
     public function testSend()

@@ -24,8 +24,9 @@ class DebugConnector extends AbstractConnector implements ResetInterface
     {
     }
 
-    public function respond(): void
+    public function respond(): string
     {
+        return '';
     }
 
     public function send($number, $text): void

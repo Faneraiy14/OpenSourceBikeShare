@@ -56,7 +56,7 @@ abstract class AbstractConnector implements SmsConnectorInterface
     abstract public function receive(): void;
 
     // confirm SMS received to API
-    abstract public function respond(): void;
+    abstract public function respond(): string;
 
     abstract public static function getType(): string;
 

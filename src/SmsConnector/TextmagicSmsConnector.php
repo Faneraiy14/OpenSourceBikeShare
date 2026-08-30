@@ -40,9 +40,9 @@ class TextmagicSmsConnector extends AbstractConnector
     }
 
     // confirm SMS received to API
-    public function respond(): void
+    public function respond(): string
     {
-        // do nothing as no response required
+        return '';
     }
 
     // send SMS message via API

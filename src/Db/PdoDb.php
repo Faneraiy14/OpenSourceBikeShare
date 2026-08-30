@@ -42,11 +42,6 @@ class PdoDb implements DbInterface
         return $result;
     }
 
-    public function getAffectedRows(): int
-    {
-        throw new \RuntimeException('Not implemented');
-    }
-
     public function getLastInsertId(): int
     {
         return (int)$this->conn->lastInsertId();

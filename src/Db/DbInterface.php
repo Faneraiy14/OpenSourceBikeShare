@@ -20,10 +20,5 @@ interface DbInterface
     /**
      * @return int
      */
-    public function getAffectedRows();
-
-    /**
-     * @return int
-     */
     public function getLastInsertId();
 }

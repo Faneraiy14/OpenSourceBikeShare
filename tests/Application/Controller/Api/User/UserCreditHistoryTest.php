@@ -6,9 +6,12 @@ namespace BikeShare\Test\Application\Controller\Api\User;
 
 use BikeShare\App\Security\UserProvider;
 use BikeShare\Credit\CreditSystemInterface;
+use BikeShare\Enum\Action;
 use BikeShare\Enum\CreditChangeType;
+use BikeShare\Repository\HistoryRepository;
 use BikeShare\Repository\UserRepository;
 use BikeShare\Test\Application\BikeSharingWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserCreditHistoryTest extends BikeSharingWebTestCase
@@ -58,5 +61,31 @@ class UserCreditHistoryTest extends BikeSharingWebTestCase
     {
         $this->client->request(Request::METHOD_GET, '/api/v1/me/credit-history');
         $this->assertResponseStatusCodeSame(401);
+    }
+
+    public static function reasonProvider(): iterable
+    {
+        yield 'known reason' => [CreditChangeType::CREDIT_ADD->value, CreditChangeType::CREDIT_ADD->value];
+        yield 'legacy/unknown' => ['legacy_reason_not_in_enum', 'unknown'];
+    }
+
+    #[DataProvider('reasonProvider')]
+    public function testCreditHistoryMapsReasonType(string $storedReason, string $expectedType): void
+    {
+        $userData = $this->client->getContainer()->get(UserRepository::class)
+            ->findItemByPhoneNumber(self::USER_PHONE_NUMBER);
+        $this->client->getContainer()->get(HistoryRepository::class)->addItem(
+            $userData['userId'],
+            0,
+            Action::CREDIT_CHANGE,
+            json_encode(['amount' => 1.0, 'balance' => 1.0, 'reason' => $storedReason], JSON_THROW_ON_ERROR)
+        );
+        $user = $this->client->getContainer()->get(UserProvider::class)->loadUserByIdentifier(self::USER_PHONE_NUMBER);
+        $this->client->loginUser($user);
+
+        $this->client->request(Request::METHOD_GET, '/api/v1/me/credit-history');
+
+        $this->assertResponseIsSuccessful(); // 200, not 500 - the actual regression
+        $this->assertSame($expectedType, $this->decodeApiResponseData()[0]['type']);
     }
 }

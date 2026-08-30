@@ -181,7 +181,14 @@ class CreditSystemTest extends TestCase
         $this->assertEquals(0, $creditSystem->getUserCredit($userId));
     }
 
-    public function testGetUserCreditHistoryParsesKnownReason()
+    public static function creditHistoryReasonProvider(): iterable
+    {
+        yield 'known reason' => ['coupon_redemption', 'coupon_redemption'];
+        yield 'unrecognized reason maps to unknown' => ['some_legacy_reason_no_longer_in_the_enum', 'unknown'];
+    }
+
+    #[DataProvider('creditHistoryReasonProvider')]
+    public function testGetUserCreditHistoryMapsReasonType(string $storedReason, string $expectedType): void
     {
         $userId = 1;
         $historyRepository = $this->createMock(HistoryRepository::class);
@@ -196,7 +203,7 @@ class CreditSystemTest extends TestCase
                     'parameter' => json_encode([
                         'amount' => 3.5,
                         'balance' => 10.0,
-                        'reason' => 'coupon_redemption',
+                        'reason' => $storedReason,
                     ], JSON_THROW_ON_ERROR),
                 ],
             ]);
@@ -217,51 +224,8 @@ class CreditSystemTest extends TestCase
         $result = $creditSystem->getUserCreditHistory($userId);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('coupon_redemption', $result[0]['type']);
+        $this->assertEquals($expectedType, $result[0]['type']);
         $this->assertEquals(3.5, $result[0]['amount']);
         $this->assertEquals(10.0, $result[0]['balance']);
-    }
-
-    public function testGetUserCreditHistoryMapsUnrecognizedReasonToUnknownInsteadOfFatalError()
-    {
-        // Regresses the bug sveneld found in review: tryFrom() returns null for a
-        // reason string outside the current CreditChangeType enum (e.g. a value
-        // written by an older code version before a case was renamed/removed),
-        // and calling ->value directly on that null used to fatal with strict_types
-        // on, before the `??` ever got a chance to fall back to 'unknown'.
-        $userId = 1;
-        $historyRepository = $this->createMock(HistoryRepository::class);
-        $historyRepository->expects($this->once())
-            ->method('findCreditHistoryByUser')
-            ->willReturn([
-                [
-                    'id' => 1,
-                    'time' => '2026-01-01 12:00:00',
-                    'action' => 5,
-                    'parameter' => json_encode([
-                        'amount' => 1.0,
-                        'balance' => 4.0,
-                        'reason' => 'some_legacy_reason_no_longer_in_the_enum',
-                    ], JSON_THROW_ON_ERROR),
-                ],
-            ]);
-
-        $creditSystem = new CreditSystem(
-            true,
-            '€',
-            9,
-            2,
-            0,
-            5,
-            10,
-            5,
-            $this->createStub(DbInterface::class),
-            $historyRepository
-        );
-
-        $result = $creditSystem->getUserCreditHistory($userId);
-
-        $this->assertCount(1, $result);
-        $this->assertEquals('unknown', $result[0]['type']);
     }
 }

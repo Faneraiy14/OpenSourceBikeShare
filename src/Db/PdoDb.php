@@ -27,7 +27,7 @@ class PdoDb implements DbInterface
         );
     }
 
-    public function query($query, $params = [])
+    public function query(string $query, array $params = []): DbResultInterface
     {
         $result = $this->conn->prepare($query);
         $result->execute($params);
@@ -35,7 +35,7 @@ class PdoDb implements DbInterface
         return new PdoDbResult($result);
     }
 
-    public function exec($query)
+    public function exec(string $query): int|bool
     {
         $result = $this->conn->exec($query);
 

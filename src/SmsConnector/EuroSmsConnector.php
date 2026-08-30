@@ -43,9 +43,9 @@ class EuroSmsConnector extends AbstractConnector
     }
 
     // confirm SMS received to API
-    public function respond(): void
+    public function respond(): string
     {
-        echo 'ok:', $this->uuid, "\n";
+        return 'ok:' . $this->uuid . "\n";
     }
 
     // send SMS message via API

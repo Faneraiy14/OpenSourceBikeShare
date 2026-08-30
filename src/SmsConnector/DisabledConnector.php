@@ -10,8 +10,9 @@ class DisabledConnector extends AbstractConnector
     {
     }
 
-    public function respond()
+    public function respond(): string
     {
+        return '';
     }
 
     public function send($number, $text): void

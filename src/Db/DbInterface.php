@@ -1,24 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BikeShare\Db;
 
 interface DbInterface
 {
-    /**
-     * @param string $query
-     * @param array $params
-     * @return DbResultInterface
-     */
-    public function query($query, $params = []);
+    public function query(string $query, array $params = []): DbResultInterface;
 
-    /**
-     * @param $query
-     * @return int|bool
-     */
-    public function exec($query);
+    public function exec(string $query): int|bool;
 
-    /**
-     * @return int
-     */
-    public function getLastInsertId();
+    public function getLastInsertId(): int;
 }

@@ -10,7 +10,7 @@ class DisabledConnector extends AbstractConnector
     {
     }
 
-    public function respond()
+    public function respond(): void
     {
     }
 

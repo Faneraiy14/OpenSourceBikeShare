@@ -24,7 +24,7 @@ class DebugConnector extends AbstractConnector implements ResetInterface
     {
     }
 
-    public function respond()
+    public function respond(): void
     {
     }
 

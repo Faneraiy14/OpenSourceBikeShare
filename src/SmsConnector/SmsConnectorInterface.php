@@ -8,7 +8,7 @@ interface SmsConnectorInterface
 {
     public function checkConfig(array $config): void;
 
-    public function respond();
+    public function respond(): void;
 
     public function receive(): void;
 

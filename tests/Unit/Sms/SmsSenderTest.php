@@ -6,6 +6,7 @@ namespace BikeShare\Test\Unit\Sms;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use BikeShare\Db\DbInterface;
+use BikeShare\Db\DbResultInterface;
 use BikeShare\Sms\SmsSender;
 use BikeShare\SmsConnector\SmsConnectorInterface;
 use BikeShare\SmsTextNormalizer\SmsTextNormalizerInterface;
@@ -73,7 +74,7 @@ class SmsSenderTest extends TestCase
             ->willReturn($rendered);
         $this->smsConnectorMock->expects($this->once())->method('getMaxMessageLength')->willReturn(160);
         $this->smsConnectorMock->expects($this->once())->method('send')->with('123', $rendered);
-        $this->dbMock->expects($this->once())->method('query');
+        $this->dbMock->expects($this->once())->method('query')->willReturn($this->createStub(DbResultInterface::class));
 
         $this->smsSender->send('123', new TranslatableMessage($key, $params), $locale);
     }
@@ -131,6 +132,8 @@ class SmsSenderTest extends TestCase
             ->method('query')
             ->willReturnCallback(function (...$parameters) use ($matcher, $dbCallParams) {
                 $this->assertSame($dbCallParams[$matcher->numberOfInvocations() - 1], $parameters);
+
+                return $this->createStub(DbResultInterface::class);
             });
 
         $this->smsSender->send($number, new TranslatableMessage($message));

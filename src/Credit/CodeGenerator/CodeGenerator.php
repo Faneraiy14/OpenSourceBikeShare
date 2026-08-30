@@ -12,7 +12,7 @@ class CodeGenerator implements CodeGeneratorInterface
     // exclude problem chars: B8G6I1l0OQDS5Z2
     private string $acceptableChars = 'ACEFHJKMNPRTUVWXY4937';
 
-    public function generate(int $length, int $count): array
+    public function generate(int $count, int $length): array
     {
         if ($length < self::MIN_LENGTH) {
             throw new \InvalidArgumentException(

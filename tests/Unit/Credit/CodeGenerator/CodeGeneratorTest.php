@@ -13,11 +13,11 @@ class CodeGeneratorTest extends TestCase
 
     public function testGenerate()
     {
-        $length = 8;
         $count = 10;
+        $length = 8;
 
         $codeGenerator = new CodeGenerator();
-        $codes = $codeGenerator->generate($length, $count);
+        $codes = $codeGenerator->generate($count, $length);
         $this->assertCount($count, $codes);
         foreach ($codes as $code) {
             $this->assertEquals($length, strlen($code));
@@ -32,7 +32,7 @@ class CodeGeneratorTest extends TestCase
         // repeating - this exercises the deduplication path rather than
         // relying on it never mattering.
         $codeGenerator = new CodeGenerator();
-        $codes = $codeGenerator->generate(3, 50);
+        $codes = $codeGenerator->generate(50, 3);
 
         $this->assertCount(50, $codes);
         $this->assertCount(50, array_unique($codes));
@@ -44,7 +44,7 @@ class CodeGeneratorTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
 
-        $codeGenerator->generate(2, 1);
+        $codeGenerator->generate(1, 2);
     }
 
     public function testThrowsRatherThanReturningFewerCodesThanRequested(): void
@@ -57,6 +57,6 @@ class CodeGeneratorTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
 
-        $codeGenerator->generate(3, 10000);
+        $codeGenerator->generate(10000, 3);
     }
 }

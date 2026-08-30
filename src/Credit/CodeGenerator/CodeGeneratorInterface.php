@@ -9,5 +9,5 @@ interface CodeGeneratorInterface
     /**
      * @return array<int, string>
      */
-    public function generate(int $length, int $count): array;
+    public function generate(int $count, int $length): array;
 }

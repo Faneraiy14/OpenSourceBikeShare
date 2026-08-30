@@ -210,14 +210,14 @@ class CreditSystemTest extends TestCase
             ]);
 
         $creditSystem = new CreditSystem(
-            true,
-            '€',
-            9,
-            2,
-            0,
-            5,
-            10,
-            5,
+            true, //isEnabled
+            '€', //creditCurrency
+            9, //minRequiredCredit
+            2, //rentalFee
+            0, //priceCycle
+            5, //longRentalFee
+            10, //limitIncreaseFee
+            5, //violationFee
             $this->createStub(DbInterface::class),
             $historyRepository
         );

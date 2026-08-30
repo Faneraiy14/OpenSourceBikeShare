@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BikeShare\Credit\CodeGenerator;
 
 interface CodeGeneratorInterface
 {
-    public function generate($count, $length, $wastage);
+    /**
+     * @return array<int, string>
+     */
+    public function generate(int $length, int $count): array;
 }

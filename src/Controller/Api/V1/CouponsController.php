@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BikeShare\Controller\Api\V1;
 
+use BikeShare\Enum\CouponStatus;
 use BikeShare\Credit\CreditSystemInterface;
 use BikeShare\Repository\CouponRepository;
 use BikeShare\Enum\CreditChangeType;
@@ -38,7 +39,7 @@ class CouponsController extends AbstractController
             );
         }
 
-        $this->couponRepository->updateStatus($coupon, 2);// Mark as used
+        $this->couponRepository->updateStatus($coupon, CouponStatus::USED);// Mark as used
         $this->creditSystem->increaseCredit(
             $this->getUser()->getUserId(),
             (float)$couponData['value'],

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BikeShare\Controller\Api\V1\Admin;
 
+use BikeShare\Enum\CouponStatus;
 use BikeShare\Credit\CodeGenerator\CodeGeneratorInterface;
 use BikeShare\Credit\CreditSystemInterface;
 use BikeShare\Repository\CouponRepository;
@@ -42,7 +43,7 @@ class CouponsController extends AbstractController
             return $this->json(['detail' => 'Credit system is disabled'], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->couponRepository->updateStatus($coupon, 1); // Mark as sold
+        $this->couponRepository->updateStatus($coupon, CouponStatus::SOLD); // Mark as sold
 
         return $this->json([
             'message' => 'Coupon ' . $coupon . ' sold.',
